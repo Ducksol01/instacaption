@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Instagram Caption Extractor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #405de6;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #405de6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .caption-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            margin-top: 10px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+        .copy-btn:active {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Instagram Caption Extractor</h1>
+        <form method="POST">
+            <input type="text" name="url" placeholder="Paste Instagram post URL here" required>
+            <button type="submit">Extract Caption</button>
+        </form>
+        {% if caption %}
+            <h3>Caption:</h3>
+            <div class="caption-box" id="captionBox">{{ caption }}</div>
+            <button class="copy-btn" onclick="copyCaption()">Copy</button>
+        {% endif %}
+    </div>
+    <script>
+        function copyCaption() {
+            var captionText = document.getElementById("captionBox").innerText;
+            navigator.clipboard.writeText(captionText).then(function() {
+                alert('Caption copied to clipboard!');
+            }, function(err) {
+                alert('Failed to copy caption');
+            });
+        }
+    </script>
+</body>
+</html>
