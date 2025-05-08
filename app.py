@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
 import time
 import random
+import os
+import tempfile
 
 app = Flask(__name__)
 
@@ -136,6 +138,41 @@ def index():
             print(f"Error extracting caption: {str(e)}")
     
     return render_template('index.html', caption=caption)
+
+@app.route('/download_reel', methods=['POST'])
+def download_reel():
+    import subprocess
+    import tempfile
+    reel_url = request.form.get('reel_url')
+    reel_error = None
+    if not reel_url or 'instagram.com/reel/' not in reel_url:
+        reel_error = 'Invalid Reel URL.'
+        return render_template('index.html', reel_error=reel_error)
+    try:
+        # Use yt-dlp to download the reel video
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = f'{tmpdir}/reel.%(ext)s'
+            cmd = [
+                'yt-dlp',
+                '-f', 'mp4',
+                '-o', output_path,
+                reel_url
+            ]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                reel_error = 'yt-dlp error: ' + result.stderr.split('\n')[0]
+                return render_template('index.html', reel_error=reel_error)
+            # Find the downloaded file
+            import glob
+            files = glob.glob(f'{tmpdir}/reel.*')
+            if not files:
+                reel_error = 'Could not download the Reel video.'
+                return render_template('index.html', reel_error=reel_error)
+            video_file = files[0]
+            return send_file(video_file, as_attachment=True, download_name='instagram_reel.mp4')
+    except Exception as e:
+        reel_error = f'Error downloading reel: {str(e)}'
+        return render_template('index.html', reel_error=reel_error)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

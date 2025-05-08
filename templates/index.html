@@ -71,6 +71,18 @@
             <div class="caption-box" id="captionBox">{{ caption }}</div>
             <button class="copy-btn" onclick="copyCaption()">Copy</button>
         {% endif %}
+        <hr>
+        <h2>Instagram Reel Downloader</h2>
+        <form id="reelForm" method="POST" action="/download_reel">
+            <input type="text" name="reel_url" placeholder="Paste Instagram Reel URL here" required>
+            <button type="submit">Download Reel</button>
+        </form>
+        {% if reel_error %}
+            <div style="color:red;">{{ reel_error }}</div>
+        {% endif %}
+        {% if reel_download_url %}
+            <a href="{{ reel_download_url }}" download class="copy-btn" style="background:#405de6;float:none;">Click here to download Reel</a>
+        {% endif %}
     </div>
     <script>
         function copyCaption() {
